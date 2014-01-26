@@ -6,3 +6,7 @@
                               ~custom-config))]
      ~@body))
 
+(defn custom-config-fixturer [& {:as config}]
+  (fn [f]
+    (with-custom-config config
+      (f))))
