@@ -38,4 +38,11 @@
   (it "enforces a lower-case extension"
     (should= "cname" (extension @cname-file))))
 
+(describe "name-witout-extension"
+  (with a-name "Hey, I am a filename. Isn't that cool?")
+  (with ext "txt")
+  (with filename (str @a-name \. @ext))
+  (it "works well with weird filenames"
+    (should= @a-name (name-without-extension (file @filename)))))
+
 (run-specs)

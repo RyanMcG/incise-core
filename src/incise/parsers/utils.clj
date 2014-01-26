@@ -35,3 +35,10 @@
       (s/split #"\.")
       (last)
       (s/lower-case)))
+
+(defn name-without-extension [^File file]
+  "Get the name of a file wihout its extension."
+  (s/join "." (-> file
+                  (.getName)
+                  (s/split #"\.")
+                  (drop-last))))
