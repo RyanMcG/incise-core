@@ -1,7 +1,6 @@
 (ns incise.server
   (:require (compojure [route :refer [files not-found]]
                        [core :refer [routes]])
-            (hiccup [page :refer [html5]])
             (incise [config :as conf]
                     [utils :refer [getenv normalize-uri]]
                     [load :refer [load-parsers-and-layouts]])
@@ -27,11 +26,23 @@
         (error (with-out-str (print-cause-trace e)))
         (when bubble (throw e))))))
 
+(def ^:private not-found-page
+   "<!DOCTYPE html>
+   <html>
+     <head>
+       <title>404 - Page not found</title>
+     </head>
+     <body>
+       <h1>404</h1>
+       <h2>Page not found</h2>
+     </body>
+   </html>")
+
 (defn create-app
   "Create a ring application that is a deverlopment friendly server."
   []
   (-> (routes (files "/" {:root (conf/get :out-dir)})
-              (not-found (html5 [:h1 "404"])))
+              (not-found not-found-page))
       (wrap-static-index)
       (wrap-reload :dirs ["src"])
       (wrap-incise)
