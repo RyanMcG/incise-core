@@ -7,8 +7,7 @@
   (:refer-clojure :exclude [reset! load assoc! get get-in]))
 
 (def ^:private default-config
-  {:parse-defaults {:layout :base
-                    :publish true}
+  {:parse-defaults {:publish true}
    :ignore-publish false
    :in-dir "content"
    :uri-root ""
