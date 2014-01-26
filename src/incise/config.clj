@@ -52,6 +52,9 @@
   [(comp string? :uri-root) "uri-root must be a string"
    (comp (complement str-starts-or-ends-with-slash?) :uri-root)
    "uri-root must not start or end with a \"/\""]
+  [#(contains? % :ignore-publish) "ignore-publish must be set"
+   (comp (partial instance? java.lang.Boolean) :ignore-publish)
+   "ignore-publish must be a boolean"]
   [:in-dir "must have an input directory (in-dir)"
    (comp string? :in-dir) "in-dir must be a string (like a path)"]
   [:out-dir "must have an output directory (out-dir)"

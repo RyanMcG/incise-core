@@ -15,6 +15,15 @@
   (it "requires an out-dir"
     (should-contain-bad-manner "must have an output directory (out-dir)"
                                (dissoc @base-config :out-dir)))
+  (context "ignore-publish"
+    (it "must contain ignore-publish"
+      (should-contain-bad-manner "ignore-publish must be set"
+                                 (dissoc @base-config :ignore-publish)))
+    (it "it complains when the ignore-publish is not boolean"
+      (should-contain-bad-manner "ignore-publish must be a boolean"
+                                 (assoc @base-config :ignore-publish 1))
+      (should-contain-bad-manner "ignore-publish must be a boolean"
+                                 (assoc @base-config :ignore-publish ""))))
   (context "uri-root"
     (it "is a good when it is a string without a leading or trailing slash"
       (conf/avow-config! (assoc @base-config :uri-root "jsj")))
