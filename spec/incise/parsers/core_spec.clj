@@ -38,13 +38,13 @@
     (should (empty? @parsers)))
   (it "gets populted when parsers are loaded"
     (load-parsers-and-layouts)
-    (doseq [extension ["htm" "html" "markdown" "md" "clj"]]
+    (doseq [extension ["htm" "html" "clj"]]
       (should-contain extension @parsers))))
 
 (describe "parse"
   (before-all (load-parsers-and-layouts))
-  (with real-md-file (file (resource "spec/another-forgotten-binding-pry.md")))
-  (with output-files (force (parse @real-md-file)))
+  (with real-html-file (file (resource "spec/example.html")))
+  (with output-files (force (parse @real-html-file)))
   (it "outputs html"
     (doseq [output-file @output-files]
       (should (.exists output-file))

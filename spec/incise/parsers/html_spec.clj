@@ -6,17 +6,14 @@
             [speclj.core :refer :all]))
 
 (describe "File->Parse"
-  (with short-md-file (file (resource "spec/short-sample.md")))
+  (with short-html-file (file (resource "spec/example.html")))
   (it "reads some stuff out of a file, yo"
-    (should= (map->Parse {:title "My Short Page"
-                          :layout :page
-                          :date (to-date "2013-08-12")
-                          :path "2013/8/12/my-short-page/index.html"
-                          :tags [:cool]
-                          :category :blarg
+    (should= (map->Parse {:title "example"
+                          :layout :html-skeleton
+                          :path "example/index.html"
                           :publish true
-                          :content "\n\nHey there!\n"
+                          :content "\n\n<p>I am some html</p>\n"
                           :extension "/index.html"})
-             (File->Parse identity @short-md-file))))
+             (File->Parse identity @short-html-file))))
 
 (run-specs)

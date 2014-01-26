@@ -23,12 +23,11 @@
   (with layout-and-parser-syms (#'incise.load/filter-namespaces
                                  #'incise.load/namespace-is-layout-or-parser?))
   (it "does not contain spec namespaces"
-    (doseq [spec-sym ['incise.layouts.impl.page-spec
-                      'incise.parsers.impl.markdown-spec]]
+    (doseq [spec-sym ['incise.parsers.impl.copy-spec]]
       (should-not-contain spec-sym @layout-and-parser-syms)))
   (it "contains default layouts and parsers"
-    (doseq [default-sym ['incise.parsers.impl.markdown
-                         'incise.layouts.impl.page]]
+    (doseq [default-sym ['incise.parsers.impl.html
+                         'incise.layouts.impl.html-skeleton]]
       (should-contain default-sym @layout-and-parser-syms))))
 
 (run-specs)

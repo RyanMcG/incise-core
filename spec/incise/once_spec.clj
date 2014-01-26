@@ -13,9 +13,8 @@
                           :precompiles []
                           :out-dir @out-dir-path))
   (it "returns files parsed"
-    (doseq [filename-title ["another-forgotten-binding-pry" "my-short-page"]]
-      (should-contain (file @out-dir-path
-                            "2013" "8" "12" filename-title "index.html")
+    (doseq [filename-title ["example"]]
+      (should-contain (file @out-dir-path filename-title "index.html")
                       @once-result))))
 
 (run-specs)
