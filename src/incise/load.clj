@@ -9,11 +9,10 @@
   [namespace-sym]
   (re-find #"incise\.(layouts|parsers)\.impl\..+" (str namespace-sym)))
 
-(defn- namespace-is-deployment-workflow?
-  "Predicate to determine if the given symbol is a namespace for a deployment
-   workflow."
+(defn- namespace-is-deployer?
+  "Predicate to determine if the given symbol is a namespace for a deployer."
   [namespace-sym]
-  (re-find #"incise\.deploy\.workflows\..+" (str namespace-sym)))
+  (re-find #"incise\.deployer\.impl\..+" (str namespace-sym)))
 
 (defn- namespace-is-spec-or-test?
   "Predicate to determine if the given namespace is a spec or test."
@@ -39,6 +38,6 @@
   (partial load-ns-syms
            (partial filter-namespaces namespace-is-layout-or-parser?)))
 
-(def load-deployment-workflows
+(def load-deployers
   (partial load-ns-syms
-          (partial filter-namespaces namespace-is-deployment-workflow?)))
+          (partial filter-namespaces namespace-is-deployer?)))

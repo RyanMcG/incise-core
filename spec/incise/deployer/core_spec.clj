@@ -1,8 +1,8 @@
-(ns incise.deploy.core-spec
+(ns incise.deployer.core-spec
   (:require [speclj.core :refer :all]
             [incise.config :as conf]
             [incise.spec-helpers :refer :all]
-            [incise.deploy.core :refer :all])
+            [incise.deployer.core :refer :all])
   (:refer-clojure :exclude [get]))
 
 (describe "register and get:"

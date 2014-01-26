@@ -3,7 +3,7 @@
                     [once :refer [once]]
                     [utils :refer [getenv]]
                     [server :refer [wrap-log-exceptions start]])
-            [incise.deploy.core :refer [deploy]]
+            [incise.deployer.core :refer [deploy]]
             [taoensso.timbre :refer [warn]]
             [clojure.string :as s]
             [clojure.tools.cli :refer [parse-opts]]))

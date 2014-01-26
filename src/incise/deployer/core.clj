@@ -1,6 +1,6 @@
-(ns incise.deploy.core
+(ns incise.deployer.core
   (:require (incise [config :as conf]
-                    [load :refer [load-deployment-workflows]]))
+                    [load :refer [load-deployers]]))
   (:refer-clojure :exclude [get]))
 
 (defonce workflows (atom {}))
@@ -12,7 +12,7 @@
   "Deploy using the user's specified workflow."
   [& {:as config}]
   (conf/merge! config)
-  (load-deployment-workflows)
+  (load-deployers)
   (let [{workflow-name :workflow :as settings} (conf/get :deploy)
         workflow (get workflow-name)]
     (if workflow
@@ -20,7 +20,7 @@
       (throw (RuntimeException. (str "No workflow registered as " workflow-name))))))
 
 (defn register
-  "Register a deployment workflow."
+  "Register a deployer."
   [workflow-name workflow]
   (swap! workflows
          assoc workflow-name workflow))
