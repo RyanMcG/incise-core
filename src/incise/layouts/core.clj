@@ -33,5 +33,7 @@
   shortname of a registered layout function."
   [short-names layout-fn]
   (swap! layouts
-         merge (zipmap (map name short-names)
+         merge (zipmap (map name (if (sequential? short-names)
+                                   short-names
+                                   [short-names]))
                        (repeat layout-fn))))
