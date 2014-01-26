@@ -2,7 +2,8 @@
   "Provides a function, html-parser, to create what could be considered the
    standard parser from a function which takes the body of a file as a string
    and returns html."
-  (:require (incise.parsers [utils :refer [meta->write-path]]
+  (:require (incise.parsers [utils :refer [meta->write-path
+                                           name-without-extension]]
                             [parse :refer [map->Parse
                                            record-parse
                                            publish-parse?]])
@@ -41,6 +42,9 @@
   (let [file-str (slurp file)
         parse-meta (merge (conf/get :parse-defaults)
                           (edn/read-string file-str))
+        parse-meta (if (contains? parse-meta :title)
+                     parse-meta
+                     (assoc parse-meta :title (name-without-extension file)))
         content (content-fn (second (s/split file-str #"\}" 2)))]
     (meta-and-content->Parse parse-meta content)))
 
@@ -62,9 +66,9 @@
   as html to the proper place under public. If it is a page it should appear at
   the root, if it is a post it will be placed under a directory strucutre based
   on its date."
-  [to-html]
+  [parser-fn]
   (fn [file]
-    (let [parse (File->Parse to-html file)]
+    (let [parse (File->Parse parser-fn file)]
       (when (publish-parse? parse)
         (record-parse (.getCanonicalPath file) parse)
         (delay [(write-Parse parse)])))))
