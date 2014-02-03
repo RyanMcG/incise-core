@@ -14,7 +14,7 @@
   (conf/merge! config)
   (conf/avow!)
   (let [{:keys [out-dir precompiles stefon in-dir]} (conf/get)
-        manifest-file-path (.getPath (file in-dir "manifest.json"))]
+        manifest-file-path (.getPath (file out-dir "manifest.json"))]
     (info "Clearing out" (str \" out-dir \"))
     (delete-recursively (file out-dir))
     (with-options (merge {:mode :production
