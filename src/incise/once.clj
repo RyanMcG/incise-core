@@ -13,11 +13,13 @@
   [& {:as config}]
   (conf/merge! config)
   (conf/avow!)
-  (let [{:keys [out-dir precompiles stefon]} (conf/get)]
+  (let [{:keys [out-dir precompiles stefon in-dir]} (conf/get)
+        manifest-file-path (.getPath (file in-dir "manifest.json"))]
     (info "Clearing out" (str \" out-dir \"))
     (delete-recursively (file out-dir))
     (with-options (merge {:mode :production
                           :serving-root out-dir
+                          :manifest-file manifest-file-path
                           :precompiles (or precompiles [])} stefon)
       (info "Precompiling assets...")
       (precompile nil)
