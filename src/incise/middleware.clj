@@ -1,4 +1,4 @@
-(ns ring.middleware.incise
+(ns incise.middleware
   (:require [clojure.java.io :refer [file]]
             [clojure.set :refer [difference]]
             [ns-tracker.core :refer [ns-tracker]]

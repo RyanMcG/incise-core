@@ -3,9 +3,9 @@
                        [core :refer [routes]])
             (incise [config :as conf]
                     [utils :refer [getenv normalize-uri]]
-                    [load :refer [load-parsers-and-layouts]])
+                    [load :refer [load-parsers-and-layouts]]
+                    [middleware :refer [wrap-incise]])
             (ring.middleware [reload :refer [wrap-reload]]
-                             [incise :refer [wrap-incise]]
                              [stacktrace :refer [wrap-stacktrace-web]])
             [clojure.tools.nrepl.server :as nrepl]
             [stefon.core :refer [asset-pipeline]]
