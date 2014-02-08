@@ -22,8 +22,8 @@
  :parse-defaults {:layout :base}
 
  ;; Tell stefon the locations of assets it should precompile
- :precompiles ["javascripts/app.js.stefon"
-               "stylesheets/app.css.stefon"]
+ :stefon {:precompiles ["javascripts/app.js.stefon"
+                        "stylesheets/app.css.stefon"]}
 
  ;; Specify the root where the deployed or onced website will be served from.
  ;; This is particularly useful for github pages deploys. Default is "". Which
