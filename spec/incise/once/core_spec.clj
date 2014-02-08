@@ -1,4 +1,4 @@
-(ns incise.once-spec
+(ns incise.once.core-spec
   (:require [incise.once :refer [once]]
             [stefon.util :refer [temp-dir]]
             [clojure.java.io :refer [file]]
@@ -10,7 +10,6 @@
   (with-all out-dir (spec-temp-dir))
   (with-all out-dir-path (.getCanonicalPath @out-dir))
   (with once-result (once :in-dir "resources/spec"
-                          :precompiles []
                           :out-dir @out-dir-path))
   (it "returns files parsed"
     (doseq [filename-title ["example"]]
