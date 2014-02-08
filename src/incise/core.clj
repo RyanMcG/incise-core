@@ -1,8 +1,8 @@
 (ns incise.core
   (:require (incise [config :as conf]
-                    [once :refer [once]]
                     [utils :refer [wrap-log-exceptions getenv]]
                     [server :refer [start]])
+            [incise.once.core :refer [once]]
             [incise.deployer.core :refer [deploy]]
             [taoensso.timbre :refer [warn]]
             [clojure.string :as s]
