@@ -37,3 +37,4 @@
 (defloader parsers-and-layouts #"incise\.(layouts|parsers)\.impl\..+")
 (defloader deployers #"incise\.deployer\.impl\..+")
 (defloader once-fixtures #"incise\.once\.fixtures\.impl\..+")
+(defloader middlewares #"incise\.middlewares\.impl\..+")

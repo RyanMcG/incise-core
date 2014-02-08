@@ -1,13 +1,13 @@
-(ns incise.middleware
+(ns incise.middlewares.impl.incise
   (:require [clojure.java.io :refer [file]]
             [clojure.set :refer [difference]]
             [ns-tracker.core :refer [ns-tracker]]
-            (incise [utils :refer [normalize-uri delete-recursively directory?]]
+            (incise [utils :refer [normalize-uri delete-recursively]]
                     [load :refer [load-parsers-and-layouts]]
                     [config :as conf])
+            [incise.middlewares.core :refer [register]]
             (incise.parsers [core :refer [input-file-seq parse-all]]
-                            [parse :refer [parses dissoc-parses]]))
-  (:import [java.io File]))
+                            [parse :refer [parses dissoc-parses]])))
 
 (defonce ^{:private true
            :doc "Keeps track of modification times of files for modified?."}
@@ -16,7 +16,7 @@
 
 (defn- modified?
   "If file is not in atom or it's modification date has advanced."
-  [^File a-file]
+  [a-file]
   (let [previous-modification-time (@file-modification-times a-file)
         last-modification-time (.lastModified a-file)]
     (swap! file-modification-times assoc a-file (.lastModified a-file))
@@ -40,8 +40,7 @@
 
 (defn output-path [a-file]
   "Look up the output path for the given input file in recorded parses."
-  (:path (@parses (.getCanonicalPath a-file))))
-
+  (:path (@parses (.getCanonicalPath a-file)))) 
 (defn requested-file?
   "A predicate which returns whether the given request is attempting to access
   the given file."
@@ -97,3 +96,5 @@
       (wrap-incise-parse)
       (wrap-reset-modified-files-with-source-change)
       (wrap-parsers-reload)))
+
+(register 500 wrap-incise)

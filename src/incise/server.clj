@@ -1,30 +1,11 @@
 (ns incise.server
   (:require (compojure [route :refer [files not-found]]
                        [core :refer [routes]])
-            (incise [config :as conf]
-                    [utils :refer [getenv normalize-uri]]
-                    [load :refer [load-parsers-and-layouts]]
-                    [middleware :refer [wrap-incise]])
-            (ring.middleware [reload :refer [wrap-reload]]
-                             [stacktrace :refer [wrap-stacktrace-web]])
+            [incise.config :as conf]
+            [incise.middlewares.core :as middlewares]
             [clojure.tools.nrepl.server :as nrepl]
-            [stefon.core :refer [asset-pipeline]]
-            [taoensso.timbre :refer [info error fatal]]
-            [clojure.stacktrace :refer [print-cause-trace]]
+            [taoensso.timbre :refer [info]]
             [org.httpkit.server :refer [run-server]]))
-
-(defn wrap-static-index [handler]
-  (fn [{:keys [uri] :as request}]
-    (handler (assoc request :uri (normalize-uri uri)))))
-
-(defn wrap-log-exceptions [func & {:keys [bubble] :or {bubble true}}]
-  "Log (i.e. print) exceptions received from the given function."
-  (fn [& args]
-    (try
-      (apply func args)
-      (catch Throwable e
-        (error (with-out-str (print-cause-trace e)))
-        (when bubble (throw e))))))
 
 (def ^:private not-found-page
    "<!DOCTYPE html>
@@ -38,17 +19,14 @@
      </body>
    </html>")
 
+(defn create-handler []
+  (routes (files "/" {:root (conf/get :out-dir)})
+          (not-found not-found-page)))
+
 (defn create-app
   "Create a ring application that is a deverlopment friendly server."
   []
-  (-> (routes (files "/" {:root (conf/get :out-dir)})
-              (not-found not-found-page))
-      (wrap-static-index)
-      (wrap-reload :dirs ["src"])
-      (wrap-incise)
-      (wrap-log-exceptions)
-      (wrap-stacktrace-web)
-      (asset-pipeline (conf/get :stefon))))
+  (middlewares/wrap-app (create-handler)))
 
 (defn serve
   "Start a development server."
