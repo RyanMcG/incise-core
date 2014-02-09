@@ -1,6 +1,5 @@
 (ns incise.utils
   (:require [clojure.java.io :refer [file]]
-            [clojure.stacktrace :refer [print-cause-trace]]
             [taoensso.timbre :refer [error]])
   (:import [java.io File]))
 
@@ -10,7 +9,7 @@
     (try
       (apply func args)
       (catch Throwable e
-        (error (with-out-str (print-cause-trace e)))
+        (error e)
         (when bubble (throw e))))))
 
 (defn slot-by
