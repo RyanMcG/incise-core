@@ -2,7 +2,7 @@
   (:require [incise.parsers.impl.copy :refer :all]
             [incise.config :as conf]
             [incise.spec-helpers :refer :all]
-            [stefon.util :refer [temp-dir]]
+            [incise.utils :refer [temp-dir]]
             [clojure.java.io :refer [file resource]]
             [speclj.core :refer :all]))
 

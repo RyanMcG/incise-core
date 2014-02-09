@@ -1,6 +1,5 @@
 (ns incise.utils-spec
   (:require [incise.utils :refer :all]
-            [stefon.util :refer [temp-dir]]
             [clojure.java.io :refer [file]]
             [speclj.core :refer :all]))
 

@@ -1,6 +1,6 @@
 (ns incise.once.core-spec
   (:require [incise.once.core :refer [once]]
-            [stefon.util :refer [temp-dir]]
+            [incise.utils :refer [temp-dir]]
             [clojure.java.io :refer [file]]
             [speclj.core :refer :all]))
 
