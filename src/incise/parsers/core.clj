@@ -3,7 +3,7 @@
             (incise [config :as conf]
                     [utils :refer [directory?]])
             [clojure.java.io :refer [file]]
-            [taoensso.timbre :refer [info]])
+            [taoensso.timbre :refer [report color-str spy]])
   (:import [java.io File]))
 
 (defonce ^{:doc "An atom containing a mapping of extensions (strings) to parse
@@ -38,8 +38,8 @@
   (let [ext (extension handle)
         current-parsers @parsers]
     (when (contains? current-parsers ext)
-      (info "Parsing" (.getPath handle))
-      ((current-parsers ext) handle))))
+      (report (color-str :blue "Parsing") (.getPath handle))
+      ((spy :trace "using parser:" (current-parsers ext)) handle))))
 
 (defn input-file-seq
   "Returns a sequence of files (exclusing directories) from the input
@@ -61,7 +61,7 @@
 (defn- log-file
   "Take a file and return it after logging its path with the given prefix."
   [prefix ^File a-file]
-  (info prefix (.getPath a-file))
+  (report (color-str :green prefix) (.getPath a-file))
   a-file)
 
 (defn parse-all

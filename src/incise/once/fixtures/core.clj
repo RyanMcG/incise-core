@@ -2,6 +2,7 @@
   (:require (incise [load :refer [load-once-fixtures load-parsers-and-layouts]]
                     [config :as conf])
             [clojure.java.io :refer [file]]
+            [taoensso.timbre :refer [spy]]
             [incise.parsers.core :refer [parse-all-input-files]]))
 
 (defn- load-fixture [thunk]
@@ -28,6 +29,7 @@
 
 (defn run-fixtures []
   ((->> @fixtures
+        (spy :trace)
         (sort-by (comp - val))
         (map key)
         (reduce generate-thunk (fn [])))))

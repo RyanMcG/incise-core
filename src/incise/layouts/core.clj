@@ -1,5 +1,6 @@
 (ns incise.layouts.core
-  (:require [incise.config :as conf])
+  (:require [incise.config :as conf]
+            [taoensso.timbre :refer [spy]])
   (:refer-clojure :exclude [get]))
 
 (defonce layouts (atom {}))
@@ -17,7 +18,7 @@
   [parse-data]
   (if-let [layout-key (:layout parse-data)]
     (if-let [layout-fn (get layout-key)]
-      (layout-fn (conf/get) parse-data)
+      ((spy :trace "with layout:" layout-fn) (conf/get) parse-data)
       (throw (ex-info (str "No layout function registered with key " layout-key)
                       {:layouts @layouts})))
     (throw (ex-info (str "No layout key specified in given parse.")

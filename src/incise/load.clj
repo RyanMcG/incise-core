@@ -1,5 +1,6 @@
 (ns incise.load
   (:require [incise.config :as conf]
+            [taoensso.timbre :refer [debug color-str]]
             [clojure.java.classpath :refer [classpath]]
             [clojure.tools.namespace.find :as ns-tools]))
 
@@ -24,13 +25,16 @@
 
 (defn- load-ns-syms
   "Require with reload all namespaces returned by the given fn."
-  [ns-syms-fn]
-  (doall (map require-sym (ns-syms-fn))))
+  [ns-type ns-syms-fn]
+  (let [namespaces (ns-syms-fn)]
+    (debug (color-str :purple "Loading " ns-type " from:") namespaces)
+    (doall (map require-sym namespaces))))
 
 (defmacro ^:private defloader [plural-sym regex]
   (let [fn-name (symbol (str 'load- plural-sym))]
     `(def ~fn-name
        (partial load-ns-syms
+                '~plural-sym
                 (partial filter-namespaces-with-fn
                          (ns-predicate-from-regex ~regex))))))
 

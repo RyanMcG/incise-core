@@ -4,7 +4,7 @@
             [incise.config :as conf]
             [incise.middlewares.core :as middlewares]
             [clojure.tools.nrepl.server :as nrepl]
-            [taoensso.timbre :refer [info]]
+            [taoensso.timbre :refer [report info]]
             [org.httpkit.server :refer [run-server]]))
 
 (def ^:private not-found-page
@@ -32,7 +32,7 @@
   "Start a development server."
   []
   (let [port (conf/get :port)]
-    (info "Serving at" (str "http://localhost:" port \/))
+    (report "Serving at" (str "http://localhost:" port \/))
     (run-server (create-app) {:port port
                               :thread (conf/get :thread-count)})))
 

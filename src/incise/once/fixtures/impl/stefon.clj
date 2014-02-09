@@ -2,7 +2,7 @@
   (:require [incise.config :as conf]
             [incise.once.fixtures.core :refer [register]]
             [clojure.java.io :refer [file]]
-            [taoensso.timbre :refer [info]]
+            [taoensso.timbre :refer [report]]
             (stefon [settings :refer [with-options]]
                     [core :refer [precompile]])))
 
@@ -13,9 +13,9 @@
                           :serving-root out-dir
                           :manifest-file manifest-file-path
                           :precompiles []} stefon)
-      (info "Precompiling assets...")
+      (report "[stefon] Precompiling assets...")
       (precompile nil)
-      (info "Done.")
+      (report "[stefon] Done.")
       (thunk))))
 
 (register stefon-fixture 400)
