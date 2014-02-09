@@ -3,13 +3,11 @@
 
 (defonce middlewares (atom {}))
 
-(defn register [rank-or-middleware & more]
-  (let [[rank middleware args] (if (fn? rank-or-middleware)
-                                 [600 rank-or-middleware more]
-                                 [rank-or-middleware (first more) (rest more)])]
-    (swap! middlewares assoc middleware [rank args])))
+(defn register* [rank middleware-var & more]
+  (swap! middlewares assoc middleware-var {:rank rank
+                                           :args more}))
 
-(defn- combine [app [middleware [_ args]]]
+(defn- combine [app [middleware {:keys [args]}]]
   (apply middleware app args))
 
 (defn wrap-app [app]
