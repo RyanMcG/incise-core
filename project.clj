@@ -14,7 +14,7 @@
                  [org.clojure/tools.cli "0.3.1"]
                  [pallet-map-merge "0.1.0"]
                  [clj-time "0.5.1"]
-                 [com.taoensso/timbre "2.6.1"]
+                 [com.taoensso/timbre "3.0.0"]
                  [com.ryanmcg/stefon "0.5.0-bdfb91935e8d91f1b2b1991f2af2ce2fca173490"]
                  [manners "0.2.0"]]
   :profiles {:dev {:dependencies [[speclj "2.9.1"]]}}
