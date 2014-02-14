@@ -11,8 +11,8 @@
   (thunk))
 
 (defn- parse-fixture [thunk]
-  (doall (parse-all-input-files))
-  (thunk))
+  (thunk)
+  (doall (parse-all-input-files)))
 
 (def fixtures (atom {load-fixture 500
                      parse-fixture 1000}))
