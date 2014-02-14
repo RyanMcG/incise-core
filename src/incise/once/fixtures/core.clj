@@ -1,21 +1,8 @@
 (ns incise.once.fixtures.core
-  (:require (incise [load :refer [load-once-fixtures load-parsers-and-layouts]]
-                    [config :as conf])
-            [clojure.java.io :refer [file]]
-            [taoensso.timbre :refer [spy]]
-            [incise.parsers.core :refer [parse-all-input-files]]))
+  (:require [incise.load :refer [load-once-fixtures]]
+            [taoensso.timbre :refer [spy]]))
 
-(defn- load-fixture [thunk]
-  (load-once-fixtures)
-  (load-parsers-and-layouts)
-  (thunk))
-
-(defn- parse-fixture [thunk]
-  (thunk)
-  (doall (parse-all-input-files)))
-
-(def fixtures (atom {load-fixture 500
-                     parse-fixture 1000}))
+(defonce fixtures (atom {}))
 
 (defn register
   "Register a fixture for once with the given rank. Rank should be a number. The
@@ -28,6 +15,8 @@
   (fn [] (fixture thunk)))
 
 (defn run-fixtures []
+  (reset! fixtures {})
+  (load-once-fixtures)
   ((->> @fixtures
         (spy :trace)
         (sort-by (comp - val))
