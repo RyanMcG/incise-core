@@ -97,4 +97,4 @@
       (wrap-reset-modified-files-with-source-change)
       (wrap-parsers-reload)))
 
-(register 500 wrap-incise)
+(register 000 wrap-incise)

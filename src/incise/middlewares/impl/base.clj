@@ -32,8 +32,8 @@
   (fn [{:keys [uri] :as request}]
     (handler (assoc request :uri (normalize-uri uri)))))
 
-(register 200 wrap-static-index)
-(register 300 wrap-reload :dirs ["src"])
-(register 700 wrap-log-request)
-(register 800 wrap-log-exceptions)
+(register -600 wrap-static-index)
+(register -300 wrap-reload :dirs ["src"])
+(register 600 wrap-log-exceptions)
 (register 900 wrap-stacktrace-web)
+(register 1200 wrap-log-request)
