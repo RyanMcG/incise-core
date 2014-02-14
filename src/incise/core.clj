@@ -1,10 +1,10 @@
 (ns incise.core
   (:require (incise [config :as conf]
-                    [once :refer [once]]
-                    [utils :refer [getenv]]
-                    [server :refer [wrap-log-exceptions start]])
+                    [utils :refer [wrap-log-exceptions getenv]]
+                    [server :refer [start]])
+            [incise.once.core :refer [once]]
             [incise.deployer.core :refer [deploy]]
-            [taoensso.timbre :refer [warn]]
+            [taoensso.timbre :as timbre]
             [clojure.string :as s]
             [clojure.tools.cli :refer [parse-opts]]))
 
@@ -30,6 +30,8 @@
     :parse-fn #(Integer. %)]
    ["-g" "--ignore-publish"
     "Ignore the publish config for content (i.e. parse regardless)."]
+   ["-l" "--log-level LOG_LEVEL" "At what level to log at"
+    :parse-fn keyword]
    ["-i" "--in-dir INPUT_DIRECTORY" "The directory to get source from"]
    ["-o" "--out-dir OUTPUT_DIRECTORY" "The directory to put content into"]
    ["-u" "--uri-root URI_ROOT"
@@ -60,6 +62,8 @@
             summary))
     (conf/load (options :config))
     (conf/merge! (dissoc options :config :help))
+    (timbre/set-level! (conf/get :log-level))
+    (timbre/merge-config! (conf/get :timbre))
     (body-fn options arguments)))
 
 (defmacro with-args

@@ -2,32 +2,31 @@
     (:require [speclj.core :refer :all]
               [incise.load :refer :all]))
 
-(describe "namespace is layout or parser filter"
-  (it "returns false on non-parser and non-layout namespaces"
-    (doseq [ns-sym ['arbitrary.name.space 'my.parser.yay 'your.layout.boop]]
-      (should-not (#'incise.load/namespace-is-layout-or-parser? ns-sym))))
-  (it "returns true for parser and layout namespaces"
-    (doseq [ns-sym ['incise.parsers.impl.cool-thing
-                    'incise.layouts.impl.bootstrapped]]
-      (should (#'incise.load/namespace-is-layout-or-parser? ns-sym)))))
+(defn it-should-load-expected-namespaces [expected-namespaces loader]
+  (it "loads only the apporiate namespaces"
+    (should= (set expected-namespaces) (set (loader)))))
 
-(describe "namespace is spec or test"
-  (it "returns true for specs and tests"
-    (doseq [ns-sym ['cool.thing-test 'incise.parsers.core-spec]]
-      (should (#'incise.load/namespace-is-spec-or-test? ns-sym))))
-  (it "returns false for other namespaces"
-    (doseq [ns-sym ['cool.thing 'incise.parsers.batman]]
-      (should-not (#'incise.load/namespace-is-spec-or-test? ns-sym)))))
+(describe "loading"
+  (with ns-syms '[incise.layouts.impl.cool
+                  incise.layouts.impl.cool-test
+                  incise.parsers.impl.cool
+                  incise.parsers.impl.cool-spec
+                  incise.deployer.impl.cool
+                  incise.once.fixtures.impl.cool])
+  (around [it]
+    (with-redefs [incise.load/require-sym identity
+                  incise.load/get-namespaces-from-classpath (fn [] @ns-syms)]
+      (it)))
 
-(describe "finding parsers and layouts"
-  (with layout-and-parser-syms (#'incise.load/filter-namespaces
-                                 #'incise.load/namespace-is-layout-or-parser?))
-  (it "does not contain spec namespaces"
-    (doseq [spec-sym ['incise.parsers.impl.copy-spec]]
-      (should-not-contain spec-sym @layout-and-parser-syms)))
-  (it "contains default layouts and parsers"
-    (doseq [default-sym ['incise.parsers.impl.html
-                         'incise.layouts.impl.html-skeleton]]
-      (should-contain default-sym @layout-and-parser-syms))))
+  (context "deployers"
+    (it-should-load-expected-namespaces '[incise.deployer.impl.cool]
+                                        load-deployers))
+  (context "layouts and parsers"
+    (it-should-load-expected-namespaces '[incise.parsers.impl.cool
+                                          incise.layouts.impl.cool]
+                                        load-parsers-and-layouts))
+  (context "once fixtures"
+    (it-should-load-expected-namespaces '[incise.once.fixtures.impl.cool]
+                                        load-once-fixtures)))
 
 (run-specs)

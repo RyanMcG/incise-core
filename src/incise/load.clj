@@ -1,43 +1,44 @@
 (ns incise.load
   (:require [incise.config :as conf]
+            [taoensso.timbre :refer [debug color-str]]
             [clojure.java.classpath :refer [classpath]]
             [clojure.tools.namespace.find :as ns-tools]))
 
-(defn- namespace-is-layout-or-parser?
-  "Predicate to determine if the given symbol is a namespace for a layout or
-   parser."
-  [namespace-sym]
-  (re-find #"incise\.(layouts|parsers)\.impl\..+" (str namespace-sym)))
+(defn- ns-predicate-from-regex [regex]
+  (fn [namespace-sym]
+    (re-find regex (str namespace-sym))))
 
-(defn- namespace-is-deployer?
-  "Predicate to determine if the given symbol is a namespace for a deployer."
-  [namespace-sym]
-  (re-find #"incise\.deployer\.impl\..+" (str namespace-sym)))
+(defn- get-namespaces-from-classpath []
+  (ns-tools/find-namespaces (classpath)))
 
-(defn- namespace-is-spec-or-test?
-  "Predicate to determine if the given namespace is a spec or test."
-  [namespace-sym]
-  (re-find #"-(test|spec)$" (str namespace-sym)))
-
-(defn- filter-namespaces
+(defn- filter-namespaces-with-fn
   "Find symbols for namespaces on the classpath that pass the given filter
-   function."
+  function."
   [filter-fn]
-  (->> (classpath)
-       (ns-tools/find-namespaces)
-       (remove namespace-is-spec-or-test?)
+  (->> (get-namespaces-from-classpath)
+       (remove (ns-predicate-from-regex #"-(test|spec)$"))
        (filter filter-fn)))
+
+(defn- require-sym [ns-sym]
+  (require :reload ns-sym)
+  ns-sym)
 
 (defn- load-ns-syms
   "Require with reload all namespaces returned by the given fn."
-  [ns-syms-fn]
-  (doseq [ns-sym (ns-syms-fn)]
-    (require :reload ns-sym)))
+  [ns-type ns-syms-fn]
+  (let [namespaces (ns-syms-fn)]
+    (debug (color-str :purple "Loading " ns-type " from:") namespaces)
+    (doall (map require-sym namespaces))))
 
-(def load-parsers-and-layouts
-  (partial load-ns-syms
-           (partial filter-namespaces namespace-is-layout-or-parser?)))
+(defmacro ^:private defloader [plural-sym regex]
+  (let [fn-name (symbol (str 'load- plural-sym))]
+    `(def ~fn-name
+       (partial load-ns-syms
+                '~plural-sym
+                (partial filter-namespaces-with-fn
+                         (ns-predicate-from-regex ~regex))))))
 
-(def load-deployers
-  (partial load-ns-syms
-          (partial filter-namespaces namespace-is-deployer?)))
+(defloader parsers-and-layouts #"incise\.(layouts|parsers)\.impl\..+")
+(defloader deployers #"incise\.deployer\.impl\..+")
+(defloader once-fixtures #"incise\.once\.fixtures\.impl\..+")
+(defloader middlewares #"incise\.middlewares\.impl\..+")

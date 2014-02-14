@@ -11,6 +11,8 @@
    :ignore-publish false
    :in-dir "content"
    :uri-root ""
+   :log-level :warn
+   :timbre {:timestamp-pattern "yyyy-MMM-dd HH:mm:ss"}
    :out-dir "public"})
 
 (defonce config (atom default-config))
