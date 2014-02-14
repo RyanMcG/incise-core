@@ -19,6 +19,7 @@
   (apply middleware app args))
 
 (defn wrap-app [app]
+  (reset! middlewares {})
   (load-middlewares)
   (->> @middlewares
        (spy :trace)
