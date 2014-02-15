@@ -6,14 +6,8 @@ If you want the batteries included version see [incise][].
 
 ## Running specs
 
-Unfortunately the speclj leiningen plugin does not work well with clj-v8 because
-it requires custom JVM options (this seems to be a bug with speclj). However,
-you can still run the tests using `lein run`:
-
 ```bash
-lein run -m specj.main
-# The vigilant runner works too
-lein run -m specj.main -a
+lein spec
 ```
 
 ## What's next?
