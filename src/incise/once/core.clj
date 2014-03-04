@@ -14,6 +14,6 @@
   "Incise just once. This requires that config is already loaded."
   [& {:as config}]
   (conf/merge! config)
-  (conf/avow!)
+  (conf/avow)
   (clear-out-dir)
   (run-fixtures))

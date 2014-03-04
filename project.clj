@@ -15,7 +15,7 @@
                  [pallet-map-merge "0.1.0"]
                  [clj-time "0.6.0"]
                  [com.taoensso/timbre "3.0.0"]
-                 [manners "0.3.0"]]
+                 [manners "0.5.0"]]
   :profiles {:dev {:dependencies [[speclj "2.9.1"]]}}
   :repl-options {:init-ns incise.repl}
   :plugins [[speclj "2.9.1"]]

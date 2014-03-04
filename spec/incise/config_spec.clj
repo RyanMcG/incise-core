@@ -8,7 +8,7 @@
 
 (describe "config validation"
   (with base-config (conf/get))
-  (it "the default config is valid" (conf/avow!))
+  (it "the default config is valid" (conf/avow))
   (it "requires an in-dir"
     (should-contain-bad-manner "must have an input directory (in-dir)"
                                (dissoc @base-config :in-dir)))
@@ -26,7 +26,7 @@
                                  (assoc @base-config :ignore-publish ""))))
   (context "uri-root"
     (it "is a good when it is a string without a leading or trailing slash"
-      (conf/avow-config! (assoc @base-config :uri-root "jsj")))
+      (conf/avow-config (assoc @base-config :uri-root "jsj")))
     (it "is a good when it is nil"
       (should-contain-bad-manner "uri-root must be a string"
                                  (assoc @base-config :uri-root nil)))
