@@ -6,7 +6,8 @@
             [incise.deployer.core :refer [deploy]]
             [taoensso.timbre :as timbre]
             [clojure.string :as s]
-            [clojure.tools.cli :refer [parse-opts]]))
+            [clojure.tools.cli :refer [parse-opts]])
+  (:gen-class))
 
 (def ^:private valid-methods #{:serve :once :deploy})
 
