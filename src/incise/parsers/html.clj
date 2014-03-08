@@ -60,9 +60,9 @@
   [content-fn ^File file]
   (let [file-str (slurp file)
         parse-meta-from-file (read-edn-map-from-beggining-of-string file-str)
-        parse-meta (merge (conf/get :parse-defaults)
-                          {:title (name-without-extension file)
-                           :layout :html-skeleton}
+        parse-meta (merge {:layout :html-skeleton}
+                          (conf/get :parse-defaults)
+                          {:title (name-without-extension file)}
                           parse-meta-from-file)
         content (content-fn (if parse-meta-from-file
                               (second (s/split file-str #"\}" 2))
