@@ -1,4 +1,4 @@
-# incise-core
+# incise-core [![Build Status](https://travis-ci.org/RyanMcG/incise-core.png?branch=master)](https://travis-ci.org/RyanMcG/incise-core)
 An extensible static site generator written in Clojure.
 
 This is the core component of incise.
