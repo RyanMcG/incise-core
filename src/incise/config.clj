@@ -2,6 +2,7 @@
   (:require [clojure.java.io :refer [reader file resource]]
             [clojure.edn :as edn]
             [pallet.map-merge :refer [merge-keys]]
+            [taoensso.timbre :refer [warn]]
             [manners.victorian :refer [defmannerisms]])
   (:import [java.io PushbackReader])
   (:refer-clojure :exclude [reset! load assoc! get get-in]))
@@ -42,8 +43,10 @@
   "Load the config from "
   [& [path-to-config]]
   (when path-to-config (clojure.core/reset! config-path path-to-config))
-  (when-let [config-file (file (or @config-path (resource "incise.edn")))]
-    (merge! (edn/read (PushbackReader. (reader config-file))))))
+  (when-let [config-url (or @config-path (resource "incise.edn"))]
+    (try (-> config-url file reader PushbackReader. edn/read merge!)
+      (catch RuntimeException e
+        (warn e "Had trouble reading in config file:" (str config-url))))))
 
 (defn- str-starts-or-ends-with-slash?
   [a-str]
