@@ -26,15 +26,20 @@
        (remove-trailing-index-html)
        (str \/)))
 
+(def ^:private root-title "index")
+(def ^:private root-path "index.html")
+(defn- root-title? [title] (= root-title (s/lower-case title)))
+
 (defn- meta-and-content->Parse
   "Combine the given meta data and content into a Parse."
-  [parse-meta content]
-  (let [meta-with-defaults (merge {:extension "/index.html"
-                                   :content content} parse-meta)]
+  [{:keys [title date] :as parse-meta} content]
+  (let [meta-with-defaults (merge {:extension "/index.html" :content content}
+                                  (if (root-title? title) {:path root-path})
+                                  parse-meta)]
     (map->Parse
       (assoc meta-with-defaults
              :path (meta->write-path meta-with-defaults)
-             :date (-> meta-with-defaults :date to-date)))))
+             :date (to-date date)))))
 
 (defn- starts-with-curly-brace? [s] (boolean (re-find #"^\s*\{" s)))
 (defn- read-edn-map-from-beggining-of-string
