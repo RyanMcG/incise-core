@@ -36,16 +36,32 @@
              :path (meta->write-path meta-with-defaults)
              :date (-> meta-with-defaults :date to-date)))))
 
+(defn- starts-with-curly-brace? [s] (boolean (re-find #"^\s*\{" s)))
+(defn- read-edn-map-from-beggining-of-string
+  "Returns a map from the edn present at the beginning of the string if it
+  starts with an edn map. Otherwise, return nil."
+  [s]
+  (if (starts-with-curly-brace? s)
+    (try
+      (edn/read-string s)
+      (catch RuntimeException e
+        (throw (ex-info (str "The given string seemed to start with a map, but"
+                             "failed to be interpretted as edn.")
+                        {:string s}
+                        e))))))
+
 (defn File->Parse
   "Read in a file and turn it into a Parse instance."
   [content-fn ^File file]
   (let [file-str (slurp file)
+        parse-meta-from-file (read-edn-map-from-beggining-of-string file-str)
         parse-meta (merge (conf/get :parse-defaults)
-                          (edn/read-string file-str))
-        parse-meta (if (contains? parse-meta :title)
-                     parse-meta
-                     (assoc parse-meta :title (name-without-extension file)))
-        content (content-fn (second (s/split file-str #"\}" 2)))]
+                          {:title (name-without-extension file)
+                           :layout :html-skeleton}
+                          parse-meta-from-file)
+        content (content-fn (if parse-meta-from-file
+                              (second (s/split file-str #"\}" 2))
+                              file-str))]
     (meta-and-content->Parse parse-meta content)))
 
 (defn write-Parse
