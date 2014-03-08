@@ -28,7 +28,7 @@
 
 (def ^:private root-title "index")
 (def ^:private root-path "index.html")
-(defn- root-title? [title] (= root-title (s/lower-case title)))
+(defn- root-title? [title] (-> title str s/lower-case (= root-title)))
 
 (defn- meta-and-content->Parse
   "Combine the given meta data and content into a Parse."
