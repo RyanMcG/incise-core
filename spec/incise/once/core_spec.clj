@@ -14,6 +14,6 @@
   (it "returns files parsed"
     (doseq [filename-title ["example"]]
       (should-contain (file @out-dir-path filename-title "index.html")
-                      @once-result))))
+                      (reduce concat (vals @once-result))))))
 
 (run-specs)

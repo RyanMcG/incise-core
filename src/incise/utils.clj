@@ -1,6 +1,6 @@
 (ns incise.utils
   (:require [clojure.java.io :refer [file]]
-            [taoensso.timbre :refer [error]])
+            [taoensso.timbre :refer [report color-str error]])
   (:import [java.io File]))
 
 (defn wrap-log-exceptions [func & {:keys [bubble] :or {bubble true}}]
@@ -11,6 +11,9 @@
       (catch Throwable e
         (error e)
         (when bubble (throw e))))))
+
+(defn log-file [color prefix a-file]
+  (report (color-str color prefix) (.getPath a-file)))
 
 (defn slot-by
   "Take a function which when called on each item in the given collection

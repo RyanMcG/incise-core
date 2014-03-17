@@ -44,7 +44,7 @@
 (describe "parse"
   (before-all (load-parsers-and-layouts))
   (with real-html-file (file (resource "spec/example.html")))
-  (with output-files (force (parse @real-html-file)))
+  (with output-files ((parse @real-html-file)))
   (it "outputs html"
     (doseq [output-file @output-files]
       (should (.exists output-file))

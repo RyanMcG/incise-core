@@ -2,7 +2,7 @@
   (:require [clojure.java.io :refer [file]]
             [clojure.set :refer [difference]]
             [ns-tracker.core :refer [ns-tracker]]
-            (incise [utils :refer [normalize-uri delete-recursively]]
+            (incise [utils :refer [log-file normalize-uri delete-recursively]]
                     [load :refer [load-parsers-and-layouts]]
                     [config :as conf])
             [incise.middlewares.core :refer [register]]
@@ -23,14 +23,9 @@
     (or (nil? previous-modification-time)
         (< previous-modification-time last-modification-time))))
 
-(def paths-set
-  "Keeps track of all parseable files. From the last invocation of
-  reference-files."
-  (atom #{}))
-
-(defn reference-files
+(defn- reference-files
   "Pass files through with side effects. Call dissoc-parses on deleted paths."
-  [files]
+  [paths-set files]
   (let [old-paths-set @paths-set
         new-paths-set (set (map (memfn getCanonicalPath) files))
         deleted-paths (difference old-paths-set new-paths-set)]
@@ -38,10 +33,11 @@
     (reset! paths-set new-paths-set))
   files)
 
-(defn output-path [a-file]
+(defn- output-path [a-file]
   "Look up the output path for the given input file in recorded parses."
-  (:path (@parses (.getCanonicalPath a-file)))) 
-(defn requested-file?
+  (:path (@parses (.getCanonicalPath a-file))))
+
+(defn- requested-file?
   "A predicate which returns whether the given request is attempting to access
   the given file."
   [request a-file]
@@ -49,20 +45,33 @@
        (= (str \/ (output-path a-file))
           (normalize-uri (:uri request)))))
 
+(defn- handle-generated-files
+  [generated [source-file generated-files]]
+  (let [previously-generated-files (@generated source-file)
+        generated-files (set generated-files)
+        files-to-delete (difference previously-generated-files generated-files)]
+    (swap! generated assoc source-file generated-files)
+    (doseq [file-to-delete files-to-delete]
+      (.delete file-to-delete)
+      (log-file :red "Deleted" file-to-delete))))
+
 (defn wrap-incise-parse
   "Call parse on each modified file in the given dir with each request."
   [handler]
   (reset! file-modification-times {})
   (let [orig-out *out*
-        orig-err *err*]
+        orig-err *err*
+        paths-set (atom #{})
+        generated (atom {})]
     (delete-recursively (file (conf/get :out-dir)))
     (fn [request]
       (binding [*out* orig-out
                 *err* orig-err]
         (->> (input-file-seq)
-             (reference-files)
+             (reference-files paths-set)
              (filter (some-fn modified? (partial requested-file? request)))
              (parse-all)
+             (map (partial handle-generated-files generated))
              (dorun)))
       (handler request))))
 

@@ -1,9 +1,9 @@
 (ns incise.parsers.core
   (:require [incise.parsers.utils :refer [extension]]
             (incise [config :as conf]
-                    [utils :refer [directory?]])
+                    [utils :refer [directory? log-file]])
             [clojure.java.io :refer [file]]
-            [taoensso.timbre :refer [report color-str spy]])
+            [taoensso.timbre :refer [report color-str trace]])
   (:import [java.io File]))
 
 (defonce ^{:doc "An atom containing a mapping of extensions (strings) to parse
@@ -29,17 +29,27 @@
   (doseq [[function-key new-function-key] mappings]
     (register new-function-key (@parsers (name function-key)))))
 
+(defn- to-thunk
+  "Coerce the given delay or thunk to a thunk."
+  [delay-or-fn]
+  {:pre [((some-fn fn? delay?) delay-or-fn)]}
+  (if (delay? delay-or-fn)
+    (fn [] (force delay-or-fn))
+    delay-or-fn))
+
 (defn parse
-  "Do all the work, parse the file and output it to the proper location."
+  "Returns a thunk which when invoked will return a list of files written from
+  the invoked parser. The thunk will have some source-file meta."
   [^File handle]
   {:pre [(instance? File handle)]}
   (when-let [mappings (conf/get :custom-parser-mappings)]
     (register-mappings mappings))
   (let [ext (extension handle)
         current-parsers @parsers]
-    (when (contains? current-parsers ext)
+    (when-let [parser (current-parsers ext)]
       (report (color-str :blue "Parsing") (.getPath handle))
-      ((spy :trace "using parser:" (current-parsers ext)) handle))))
+      (trace "using parser:" parser)
+      (with-meta (to-thunk (parser handle)) {:source-file handle}))))
 
 (defn input-file-seq
   "Returns a sequence of files (exclusing directories) from the input
@@ -50,19 +60,11 @@
        (file-seq)
        (remove directory?)))
 
-(defn- invoke-delay-or-function
-  "Invoke the given delay or function."
-  [delay-or-fn]
-  {:pre [((some-fn fn? delay?) delay-or-fn)]}
-  (condp #(%1 %2) delay-or-fn
-    fn? (delay-or-fn)
-    delay? (force delay-or-fn)))
-
-(defn- log-file
-  "Take a file and return it after logging its path with the given prefix."
-  [prefix ^File a-file]
-  (report (color-str :green prefix) (.getPath a-file))
-  a-file)
+(defn- invoke [parsing-thunk]
+  (let [handle (-> parsing-thunk meta :source-file)
+        generated-files (parsing-thunk)]
+    (doseq [f generated-files] (log-file :green "Generated" f))
+    [handle generated-files]))
 
 (defn parse-all
   "Parse all of the given files completely by calling parse on each one and
@@ -72,8 +74,8 @@
        (map parse)
        (keep identity)
        (doall) ; Ensure that all files have been parsed.
-       (mapcat invoke-delay-or-function)
-       (map (partial log-file "Generated"))))
+       (map invoke)
+       (into {})))
 
 (defn parse-all-input-files
   "Completely parse all of the files from the input directory."
