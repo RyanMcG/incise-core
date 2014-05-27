@@ -12,6 +12,24 @@
    <html>
      <head>
        <title>404 - Page not found</title>
+       <style type=\"text/css\">
+         h1 {
+           font-weight: 100;
+           font-size: 3em;
+         }
+         h2 {
+           font-weight: 500;
+           font-size: 2em;
+         }
+         html {
+           height: 100%;
+           background-color: #ddd;
+         }
+         body {
+           font-family: sans-serif;
+           padding: 5% 10% 0;
+         }
+       </style>
      </head>
      <body>
        <h1>404</h1>
