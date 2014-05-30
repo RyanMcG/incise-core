@@ -21,13 +21,18 @@
    ["-c" "--config CONFIG_FILE"
     "The path to an edn file acting as configuration for incise"]
    ["-p" "--port PORT" "The port number to run the development server on."
-    :default (getenv "INCISE_PORT" 5000)
+    :default (getenv "INCISE_PORT" (conf/get :port))
+    :parse-fn #(Integer. %)
+    :validate [#(< 0 % 0x10000)
+               "Must be a number between 0 and 65536"]]
+   [nil "--nrepl-port PORT" "The port number to run the nrepl server on."
+    :default (getenv "INCISE_NREPL_PORT" (conf/get :nrepl-port))
     :parse-fn #(Integer. %)
     :validate [#(< 0 % 0x10000)
                "Must be a number between 0 and 65536"]]
    ["-t" "--thread-count THREAD_COUNT"
     "The number of threads for the development server to use."
-    :default (getenv "INCISE_THREAD_COUNT" 4)
+    :default (getenv "INCISE_THREAD_COUNT" (conf/get :thread-count))
     :parse-fn #(Integer. %)]
    ["-g" "--ignore-publish"
     "Ignore the publish config for content (i.e. parse regardless)."]
