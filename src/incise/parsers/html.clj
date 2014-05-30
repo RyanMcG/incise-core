@@ -5,7 +5,7 @@
   (:require (incise.parsers [utils :refer [meta->write-path
                                            name-without-extension]]
                             [parse :refer [map->Parse
-                                           record-parse
+                                           record-parse!
                                            publish-parse?]])
             [incise.layouts.core :refer [Parse->string]]
             [incise.config :as conf]
@@ -91,5 +91,5 @@
   (fn [file]
     (let [parse (File->Parse parser-fn file)]
       (when (publish-parse? parse)
-        (record-parse (.getCanonicalPath file) parse)
+        (record-parse! (.getCanonicalPath file) parse)
         (delay [(write-Parse parse)])))))

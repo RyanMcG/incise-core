@@ -11,7 +11,7 @@
 
 (def ^:private valid-methods #{:serve :once :deploy})
 
-(defn get-cli-options []
+(defn- get-cli-options []
   [["-h" "--help" "Print this help."]
    ["-m" "--method METHOD" "serve, once, or deploy"
     :default :serve
@@ -38,11 +38,11 @@
    ["-u" "--uri-root URI_ROOT"
     "The path relative to the domain root where the generated site will be hosted."]])
 
-(defn exit [code & messages]
+(defn- exit [code & messages]
   (dorun (map println messages))
   (System/exit code))
 
-(defn with-args*
+(defn- with-args*
   "A helper function to with-args macro which does all the work.
 
   1.  Parse arguments
@@ -61,35 +61,35 @@
             "A tool for incising."
            ""
             summary))
-    (conf/load (options :config))
+    (conf/load! (options :config))
     (conf/merge! (dissoc options :config :help))
     (timbre/set-level! (conf/get :log-level))
     (timbre/merge-config! (conf/get :timbre))
     (body-fn options arguments)))
 
-(defmacro with-args
+(defmacro ^:private with-args
   "Take arguments parsing them using cli and handle help accordingly."
   [args & body]
   `(with-args* ~args (fn [~'options ~'cli-args] ~@body)))
 
-(defn wrap-pre [func pre-func & more]
+(defn- wrap-pre [func pre-func & more]
   (fn [& args]
     (apply pre-func more)
     (apply func args)))
 
-(defn wrap-post [func post-func & more]
+(defn- wrap-post [func post-func & more]
   (fn [& args]
     (let [return-value (apply func args)]
       (apply post-func more)
       return-value)))
 
-(defn wrap-serve
+(defn- wrap-serve
   [main-func]
   (-> main-func
       (wrap-pre conf/avow)
       (wrap-log-exceptions :bubble false)))
 
-(defn wrap-main
+(defn- wrap-main
   [main-func]
   (-> main-func
       (wrap-serve)

@@ -39,7 +39,7 @@
 
 (defn serving? [] (= (get :method) :serve))
 
-(defn load
+(defn load!
   "Load the config from "
   [& [path-to-config]]
   (when path-to-config (clojure.core/reset! config-path path-to-config))
