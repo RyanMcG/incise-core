@@ -96,14 +96,6 @@
     (load-parsers-and-layouts)
     (handler request)))
 
-(defn wrap-incise
-  "A middleware which does everything necessary for incise. It loads parsers and
-  layouts, and eagerly parses files. It even reparses files when Clojure source
-  is changed (e.g. a layout is modified)."
-  [handler]
-  (-> handler
-      (wrap-incise-parse)
-      (wrap-reset-modified-files-with-source-change)
-      (wrap-parsers-reload)))
-
-(register 000 wrap-incise)
+(register   0 wrap-incise-parse)
+(register  50 wrap-reset-modified-files-with-source-change)
+(register 100 wrap-parsers-reload)
