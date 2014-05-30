@@ -1,8 +1,9 @@
 (ns incise.core
   (:require (incise [config :as conf]
                     [utils :refer [wrap-log-exceptions getenv]]
-                    [server :refer [start]])
+                    [server :refer [create-servers]])
             [incise.once.core :refer [once]]
+            [com.stuartsierra.component :as component]
             [incise.deployer.core :refer [deploy]]
             [taoensso.timbre :as timbre]
             [clojure.string :as s]
@@ -100,6 +101,7 @@
       (wrap-serve)
       (wrap-post #(System/exit 0))))
 
+(defn- serve [] (component/start (create-servers)))
 (defn -main
   "Based on the given args either deploy, compile or start the development
   server."
@@ -108,4 +110,4 @@
     ((case (:method options)
        :deploy (wrap-main deploy)
        :once (wrap-main once)
-       :serve (wrap-serve start)))))
+       :serve (wrap-serve serve)))))
