@@ -3,7 +3,6 @@
             [incise.config :as conf]
             [taoensso.timbre :refer [color-str info]]
             (ring.middleware [reload :refer [wrap-reload]]
-                             [refresh :refer [wrap-refresh]]
                              [stacktrace :refer [wrap-stacktrace-web]])
             [incise.middlewares.core :refer [register]]))
 
@@ -35,10 +34,7 @@
     (handler (assoc request :uri (normalize-uri uri)))))
 
 (register -600 wrap-static-index)
-(register -300 wrap-reload :dirs ["src"])
-(if-let [refresh-config (conf/get-in [:middlewares :refresh]
-                                     ["src" (conf/get :in-dir)])]
-  (register -200 wrap-refresh refresh-config))
+(register -300 wrap-reload {:dirs ["src"]})
 (register 600 wrap-log-exceptions)
 (register 900 wrap-stacktrace-web)
 (register 1200 wrap-log-request)
