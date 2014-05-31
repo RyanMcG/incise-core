@@ -5,7 +5,7 @@
   (:require (incise.parsers [utils :refer [meta->write-path
                                            name-without-extension]]
                             [parse :refer [map->Parse
-                                           record-parse
+                                           record-parse!
                                            publish-parse?]])
             [incise.layouts.core :refer [Parse->string]]
             [incise.config :as conf]
@@ -14,13 +14,14 @@
             [clj-time.coerce :refer [to-date]]
             [clojure.string :as s]
             [clojure.java.io :refer [file reader]])
-  (:import [java.io File]))
+  (:import [java.io File]
+           [incise.parsers.parse Parse]))
 
 (defn- remove-trailing-index-html
   [path]
   (s/replace path #"/index\.html$" "/"))
 
-(defn Parse->path [parse]
+(defn Parse->path [^Parse parse]
   (->> parse
        (:path)
        (remove-trailing-index-html)
@@ -50,7 +51,7 @@
     (try
       (edn/read-string s)
       (catch RuntimeException e
-        (throw (ex-info (str "The given string seemed to start with a map, but"
+        (throw (ex-info (str "The given string seemed to start with a map, but "
                              "failed to be interpretted as edn.")
                         {:string s}
                         e))))))
@@ -72,7 +73,7 @@
 (defn write-Parse
   "Write the result of Parse->string to a file in the out-dir at the path
   specified in the given parse. Return the written File."
-  [^incise.parsers.parse.Parse parse-data]
+  [^Parse parse-data]
   (let [out-file (file (conf/get :out-dir) (:path parse-data))]
     (-> out-file
         (.getParentFile)
@@ -88,8 +89,8 @@
   the root, if it is a post it will be placed under a directory strucutre based
   on its date."
   [parser-fn]
-  (fn [file]
-    (let [parse (File->Parse parser-fn file)]
+  (fn html-parser-parser [file]
+    (let [^Parse parse (File->Parse parser-fn file)]
       (when (publish-parse? parse)
-        (record-parse (.getCanonicalPath file) parse)
+        (record-parse! (.getCanonicalPath file) parse)
         (delay [(write-Parse parse)])))))

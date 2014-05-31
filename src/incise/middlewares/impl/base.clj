@@ -1,5 +1,6 @@
 (ns incise.middlewares.impl.base
   (:require [incise.utils :refer [normalize-uri wrap-log-exceptions]]
+            [incise.config :as conf]
             [taoensso.timbre :refer [color-str info]]
             (ring.middleware [reload :refer [wrap-reload]]
                              [stacktrace :refer [wrap-stacktrace-web]])
@@ -33,7 +34,7 @@
     (handler (assoc request :uri (normalize-uri uri)))))
 
 (register -600 wrap-static-index)
-(register -300 wrap-reload :dirs ["src"])
+(register -300 wrap-reload {:dirs ["src"]})
 (register 600 wrap-log-exceptions)
 (register 900 wrap-stacktrace-web)
 (register 1200 wrap-log-request)

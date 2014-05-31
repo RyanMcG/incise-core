@@ -11,6 +11,9 @@
   {:parse-defaults {:publish true}
    :ignore-publish false
    :in-dir "content"
+   :port 5000
+   :nrepl-port 5001
+   :thread-count 4
    :uri-root ""
    :log-level :warn
    :timbre {:timestamp-pattern "yyyy-MMM-dd HH:mm:ss"}
@@ -39,7 +42,7 @@
 
 (defn serving? [] (= (get :method) :serve))
 
-(defn load
+(defn load!
   "Load the config from "
   [& [path-to-config]]
   (when path-to-config (clojure.core/reset! config-path path-to-config))

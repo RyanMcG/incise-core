@@ -1,12 +1,17 @@
 (ns incise.parsers.core-spec
   (:require [speclj.core :refer :all]
             [incise.config :as conf]
-            (incise [load :refer [load-parsers-and-layouts]])
+            (incise [load :refer [load-parsers-and-layouts]]
+                    [spec-helpers :refer [redef-around]])
             [clojure.java.io :refer [file resource]]
+            [incise.layouts.core :refer [layouts]]
             [incise.parsers.core :refer :all]))
 
+(def redef-parsers (redef-around parsers (atom {})))
+(def redef-layouts (redef-around layouts (atom {})))
+
 (describe "register"
-  (before (reset! parsers {}))
+  redef-parsers
   (with parser (fn []))
   (it "can register parsers to extensions"
     (should-not-throw (register [:mkd "markdown"] @parser))
@@ -19,21 +24,22 @@
   (it "can register parsers to keyword extensions"
     (should-not-throw (register [:markdown] @parser))))
 
-(describe "register-mappings"
-  (before (reset! parsers {}))
+(describe "register-mappings!"
+  redef-parsers
   (with parser (fn []))
   (with mappings {:markdown :mkd
                   :txt [:rst :thing]})
   (before (register :markdown @parser))
   (before (register :txt @parser))
   (it "register mappings copies parsers to new extensions"
-    (register-mappings @mappings)
+    (register-mappings! @mappings)
     (doseq [parser-key (map name [:mkd :thing :rst])]
       (should-contain parser-key @parsers)
       (should= @parser (@parsers parser-key)))))
 
 (describe "parsers"
-  (before-all (reset! parsers {}))
+  redef-parsers
+  redef-layouts
   (it "is initially empty"
     (should (empty? @parsers)))
   (it "gets populted when parsers are loaded"
@@ -42,7 +48,9 @@
       (should-contain extension @parsers))))
 
 (describe "parse"
-  (before-all (load-parsers-and-layouts))
+  redef-parsers
+  redef-layouts
+  (before (load-parsers-and-layouts))
   (with real-html-file (file (resource "spec/example.html")))
   (with output-files ((parse @real-html-file)))
   (it "outputs html"

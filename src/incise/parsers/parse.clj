@@ -29,13 +29,13 @@
   parses
   (atom {}))
 
-(defn dissoc-parses
+(defn dissoc-parses!
   "Disassociates the given collection of paths from parses. This is useful
   during development when a file is deleted from the input directory."
   [deleted-paths]
   (apply swap! parses dissoc deleted-paths))
 
-(defn record-parse
+(defn record-parse!
   "Record the given parse at the given path in the parses atom."
   [canonical-path ^Parse a-parse]
   (swap! parses assoc canonical-path a-parse))

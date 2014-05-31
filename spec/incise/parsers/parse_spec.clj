@@ -13,21 +13,21 @@
   `(with-redefs [parses @parses-stub]
      ~@body))
 
-(describe "record-parse"
+(describe "record-parse!"
   (with parses-stub (atom {}))
   (with a-parse (map->Parse {}))
   (with path "my/cool/path.md")
   (around [it] (with-clean-parses (it)))
   (it "records the specified Parse at the specified path in parses atom"
-    (record-parse @path @a-parse)
+    (record-parse! @path @a-parse)
     (should= {@path @a-parse} @parses)))
 
-(describe "dissoc-parses"
+(describe "dissoc-parses!"
   (with path "my/cool/path.md")
   (with parses-stub (atom {@path (map->Parse {})}))
   (around [it] (with-clean-parses (it)))
   (it "removes the specified paths from the parses atom"
-    (dissoc-parses [@path])
+    (dissoc-parses! [@path])
     (should= {} @parses)))
 
 (defmacro should-always-publish []

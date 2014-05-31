@@ -1,8 +1,9 @@
 (ns incise.core
   (:require (incise [config :as conf]
                     [utils :refer [wrap-log-exceptions getenv]]
-                    [server :refer [start]])
+                    [server :refer [create-servers]])
             [incise.once.core :refer [once]]
+            [com.stuartsierra.component :as component]
             [incise.deployer.core :refer [deploy]]
             [taoensso.timbre :as timbre]
             [clojure.string :as s]
@@ -11,7 +12,7 @@
 
 (def ^:private valid-methods #{:serve :once :deploy})
 
-(defn get-cli-options []
+(defn- get-cli-options []
   [["-h" "--help" "Print this help."]
    ["-m" "--method METHOD" "serve, once, or deploy"
     :default :serve
@@ -21,13 +22,18 @@
    ["-c" "--config CONFIG_FILE"
     "The path to an edn file acting as configuration for incise"]
    ["-p" "--port PORT" "The port number to run the development server on."
-    :default (getenv "INCISE_PORT" 5000)
+    :default (getenv "INCISE_PORT" (conf/get :port))
+    :parse-fn #(Integer. %)
+    :validate [#(< 0 % 0x10000)
+               "Must be a number between 0 and 65536"]]
+   [nil "--nrepl-port PORT" "The port number to run the nrepl server on."
+    :default (getenv "INCISE_NREPL_PORT" (conf/get :nrepl-port))
     :parse-fn #(Integer. %)
     :validate [#(< 0 % 0x10000)
                "Must be a number between 0 and 65536"]]
    ["-t" "--thread-count THREAD_COUNT"
     "The number of threads for the development server to use."
-    :default (getenv "INCISE_THREAD_COUNT" 4)
+    :default (getenv "INCISE_THREAD_COUNT" (conf/get :thread-count))
     :parse-fn #(Integer. %)]
    ["-g" "--ignore-publish"
     "Ignore the publish config for content (i.e. parse regardless)."]
@@ -38,11 +44,11 @@
    ["-u" "--uri-root URI_ROOT"
     "The path relative to the domain root where the generated site will be hosted."]])
 
-(defn exit [code & messages]
+(defn- exit [code & messages]
   (dorun (map println messages))
   (System/exit code))
 
-(defn with-args*
+(defn- with-args*
   "A helper function to with-args macro which does all the work.
 
   1.  Parse arguments
@@ -61,40 +67,41 @@
             "A tool for incising."
            ""
             summary))
-    (conf/load (options :config))
+    (conf/load! (options :config))
     (conf/merge! (dissoc options :config :help))
     (timbre/set-level! (conf/get :log-level))
     (timbre/merge-config! (conf/get :timbre))
     (body-fn options arguments)))
 
-(defmacro with-args
+(defmacro ^:private with-args
   "Take arguments parsing them using cli and handle help accordingly."
   [args & body]
   `(with-args* ~args (fn [~'options ~'cli-args] ~@body)))
 
-(defn wrap-pre [func pre-func & more]
+(defn- wrap-pre [func pre-func & more]
   (fn [& args]
     (apply pre-func more)
     (apply func args)))
 
-(defn wrap-post [func post-func & more]
+(defn- wrap-post [func post-func & more]
   (fn [& args]
     (let [return-value (apply func args)]
       (apply post-func more)
       return-value)))
 
-(defn wrap-serve
+(defn- wrap-serve
   [main-func]
   (-> main-func
       (wrap-pre conf/avow)
       (wrap-log-exceptions :bubble false)))
 
-(defn wrap-main
+(defn- wrap-main
   [main-func]
   (-> main-func
       (wrap-serve)
       (wrap-post #(System/exit 0))))
 
+(defn- serve [] (component/start (create-servers)))
 (defn -main
   "Based on the given args either deploy, compile or start the development
   server."
@@ -103,4 +110,4 @@
     ((case (:method options)
        :deploy (wrap-main deploy)
        :once (wrap-main once)
-       :serve (wrap-serve start)))))
+       :serve (wrap-serve serve)))))

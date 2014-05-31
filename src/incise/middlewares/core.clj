@@ -23,5 +23,5 @@
   (load-middlewares)
   (->> @middlewares
        (spy :trace)
-       (sort-by (comp first val))
+       (sort-by (comp :rank val))
        (reduce combine app)))

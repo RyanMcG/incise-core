@@ -17,7 +17,7 @@
     (with-redefs [incise.load/require-sym identity
                   incise.load/get-namespaces-from-classpath (fn [] @ns-syms)]
       (it)))
-
+  (around [it] (with-out-str (it)))
   (context "deployers"
     (it-should-load-expected-namespaces '[incise.deployer.impl.cool]
                                         load-deployers))

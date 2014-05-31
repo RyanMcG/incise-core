@@ -12,4 +12,4 @@
   (doall (parse-all-input-files)))
 
 (register load-fixture -500)
-(register parse-fixture 000)
+(register parse-fixture   0)
