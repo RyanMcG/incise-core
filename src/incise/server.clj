@@ -69,18 +69,24 @@
   (start [this]
     (assoc this :server (serve-nrepl port)))
   (stop [this]
-    (nrepl/stop-server server)
-    (.delete (get-nrepl-port-file))
-    (info "Stopped nREPL server on port" port)
-    (assoc this :server nil)))
+    (if server
+      (do
+        (nrepl/stop-server server)
+        (.delete (get-nrepl-port-file))
+        (info "Stopped nREPL server on port" port)
+        (assoc this :server nil))
+      this)))
 
 (defrecord HttpServer [port stop-server]
   component/Lifecycle
   (start [this] (assoc this :stop-server (serve)))
   (stop [this]
-    (stop-server)
-    (report "Stopped HTTP server on port" port)
-    (assoc this :stop-server nil)))
+    (if stop-server
+      (do
+        (stop-server)
+        (report "Stopped HTTP server on port" port)
+        (assoc this :stop-server nil))
+      this)))
 
 (defn create-http-server []
   (map->HttpServer {:port (conf/get :port)}))
