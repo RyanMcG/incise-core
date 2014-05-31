@@ -5,3 +5,6 @@
 
 (defmacro around-with-custom-config [& {:as custom-config}]
   `(around [it#] (with-custom-config ~custom-config (it#))))
+
+(defmacro redef-around [& bindings]
+  `(around [it#] (with-redefs [~@bindings] (it#))))
