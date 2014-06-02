@@ -7,7 +7,7 @@
                             [parse :refer [map->Parse
                                            record-parse!
                                            publish-parse?]])
-            [incise.layouts.core :refer [Parse->string]]
+            [incise.transformers.core :refer [transform]]
             [incise.config :as conf]
             [taoensso.timbre :refer [info]]
             [clojure.edn :as edn]
@@ -61,7 +61,7 @@
   [content-fn ^File file]
   (let [file-str (slurp file)
         parse-meta-from-file (read-edn-map-from-beggining-of-string file-str)
-        parse-meta (merge {:layout :html-skeleton}
+        parse-meta (merge {:transformer :html-skeleton}
                           (conf/get :parse-defaults)
                           {:title (name-without-extension file)}
                           parse-meta-from-file)
@@ -78,7 +78,7 @@
     (-> out-file
         (.getParentFile)
         (.mkdirs))
-    (spit out-file (Parse->string parse-data))
+    (spit out-file (-> parse-data (dissoc :path) transform :content))
     out-file))
 
 (defn html-parser

@@ -1,5 +1,6 @@
-(ns incise.layouts.utils
-  (:require [robert.hooke :refer [with-scope add-hook]]))
+(ns incise.transformers.layout
+  (:require [incise.config :as conf]
+            [robert.hooke :refer [with-scope add-hook]]))
 
 (declare ^:dynamic *site-options*)
 (declare ^:dynamic *parse*)
@@ -26,11 +27,11 @@
   (with-normalized-params
     `(defn ~sym-name
        ~doc-string
-       [site-options# parse#]
-       (binding [*site-options* site-options#
+       [parse#]
+       (binding [*site-options* (conf/get)
                  *parse* parse#]
          (let [~destructuring [*site-options* *parse*]]
-           (with-scope ~@body))))))
+           (assoc parse# :content (with-scope ~@body)))))))
 
 (defmacro defpartial
   "Defines a 'partial' which is basically a function with some default context."
@@ -44,8 +45,8 @@
 
 (defmacro repartial
   "Replace the given var in a layout with a new function which will be called in
-   its place and passed the result of the fn it is replacing. Returns an empty
-   string so it can be used in layouts without issues."
+  its place and passed the result of the fn it is replacing. Returns an empty
+  string so it can be used in layouts without issues."
   [to-be-replaced replacement]
   `(do
      (add-hook #'~to-be-replaced
@@ -71,4 +72,4 @@
 
 (defn use-layout
   "Use the given layout function by calling it with *site-options* and *parse*."
-  [layout-fn] (layout-fn *site-options* *parse*))
+  [layout-fn] (layout-fn *parse*))

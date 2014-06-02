@@ -9,7 +9,7 @@
   (with short-html-file (file (resource "spec/example.html")))
   (it "reads some stuff out of a file, yo"
     (should= (map->Parse {:title "example"
-                          :layout :html-skeleton
+                          :transformers [:html-skeleton-layout]
                           :path "example/index.html"
                           :publish true
                           :content "\n\n<p>I am some html</p>\n"

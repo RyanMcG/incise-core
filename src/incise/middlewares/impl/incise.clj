@@ -3,7 +3,7 @@
             [clojure.set :refer [difference]]
             [ns-tracker.core :refer [ns-tracker]]
             (incise [utils :refer [log-file normalize-uri delete-recursively]]
-                    [load :refer [load-parsers-and-layouts]]
+                    [load :refer [load-parsers-and-transformers]]
                     [config :as conf])
             [incise.middlewares.core :refer [register]]
             (incise.parsers [core :refer [input-file-seq parse-all]]
@@ -90,10 +90,10 @@
       (handler request))))
 
 (defn wrap-parsers-reload
-  "Reload all parsers and layouts with each request."
+  "Reload all parsers and transformers with each request."
   [handler]
   (fn [request]
-    (load-parsers-and-layouts)
+    (load-parsers-and-transformers)
     (handler request)))
 
 (register   0 wrap-incise-parse)

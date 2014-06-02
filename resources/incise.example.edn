@@ -2,11 +2,11 @@
  ;; up to individual extensions to use them or not though some are used by
  ;; incise's core components.
 
- ;; Used by layouts provided by incise to fill in the title tag of generated
+ ;; Used by transformers provided by incise to fill in the title tag of generated
  ;; pages.
  :site-title "My Website"
 
- ;; Used by some layouts to place the authors name in footer and possibly
+ ;; Used by some transformers to place the authors name in footer and possibly
  ;; elsewhere.
  :author "Your Name Here"
 
@@ -19,7 +19,7 @@
  :out-dir "resources/public"
 
  ;; This map will have meta maps from a parsed files merged into it.
- :parse-defaults {:layout :base}
+ :parse-defaults {:transformers [:html-skeleton-layout]}
 
  ;; Specify the root where the deployed or onced website will be served from.
  ;; This is particularly useful for github pages deploys. Default is "". Which

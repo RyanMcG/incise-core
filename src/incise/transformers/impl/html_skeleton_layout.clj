@@ -1,7 +1,6 @@
-(ns incise.layouts.impl.html-skeleton
-  (:require (incise.layouts [core :refer [register]]
-                            [utils :refer [deflayout
-                                           render-content]])))
+(ns incise.transformers.impl.html-skeleton-layout
+  (:require (incise.transformers [core :refer [register]]
+                                 [layout :refer [deflayout render-content]])))
 
 (deflayout skeleton
   [{:keys [site-title]} {:keys [content]}]
@@ -13,4 +12,4 @@
          <body>" (render-content content) "</body>
        </html>"))
 
-(register :html-skeleton skeleton)
+(register :html-skeleton-layout skeleton)

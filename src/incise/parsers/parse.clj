@@ -9,7 +9,7 @@
                   ^String extension
                   content
                   date
-                  ^String layout
+                  ^String transformer
                   ^String path
                   ^clojure.lang.Seqable tags
                   ^String category])
