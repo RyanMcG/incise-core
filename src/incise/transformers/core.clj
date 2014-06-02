@@ -15,12 +15,8 @@
 (defn get [transformer-name & more]
   (apply @transformers (name transformer-name) more))
 
-(defn- get-transfomer-keys [{tkeys :transformers :as data}]
-  (if-let [tkeys ((if (sequential? tkeys) seq list) tkeys)]
-    (map name tkeys)
-    (throw (ex-info "No transformers specified in given parse."
-                    {:available-transformers @transformers
-                     :parse data}))))
+(defn- get-transfomer-keys [{tkeys :transformers}]
+  (seq (map name tkeys)))
 
 (defn- dissoc-untranformable-keys [data]
   (dissoc data :transformers))
@@ -38,11 +34,11 @@
 (defn transform
   "Take a Parse or parse-like map and pass it through the appropriate transformer."
   [data]
-  (let [tkeys (get-transfomer-keys data)
-        transformable-data (dissoc-untranformable-keys data)]
+  (if-let [tkeys (get-transfomer-keys data)]
     (->> tkeys
          (lookup-transformers)
-         (reduce invoke-transformer transformable-data))))
+         (reduce invoke-transformer (dissoc-untranformable-keys data)))
+    data))
 
 (defn register
   "Register a transformer function to a shortname.
