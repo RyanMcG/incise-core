@@ -11,11 +11,16 @@
             [incise.config :as conf]
             [taoensso.timbre :refer [info]]
             [clojure.edn :as edn]
+            [pallet.map-merge :refer [merge-keys]]
             [clj-time.coerce :refer [to-date]]
             [clojure.string :as s]
             [clojure.java.io :refer [file reader]])
   (:import [java.io File]
            [incise.parsers.parse Parse]))
+
+(def default-meta {:transformers [:html-skeleton-layout
+                                  :html-header-anchors]
+                   :extension "/index.html"})
 
 (defn- remove-trailing-index-html
   [path]
@@ -34,13 +39,16 @@
 (defn- meta-and-content->Parse
   "Combine the given meta data and content into a Parse."
   [{:keys [title date] :as parse-meta} content]
-  (let [meta-with-defaults (merge {:extension "/index.html" :content content}
-                                  (if (root-title? title) {:path root-path})
-                                  parse-meta)]
+  (let [meta-with-defaults (merge-keys
+                             {}
+                             default-meta
+                             (if (root-title? title) {:path root-path})
+                             parse-meta)]
     (map->Parse
       (assoc meta-with-defaults
              :path (meta->write-path meta-with-defaults)
-             :date (to-date date)))))
+             :date (to-date date)
+             :content content))))
 
 (defn- starts-with-curly-brace? [s] (boolean (re-find #"^\s*\{" s)))
 (defn- read-edn-map-from-beggining-of-string
@@ -61,8 +69,7 @@
   [content-fn ^File file]
   (let [file-str (slurp file)
         parse-meta-from-file (read-edn-map-from-beggining-of-string file-str)
-        parse-meta (merge {:transformer :html-skeleton}
-                          (conf/get :parse-defaults)
+        parse-meta (merge (conf/get :parse-defaults)
                           {:title (name-without-extension file)}
                           parse-meta-from-file)
         content (content-fn (if parse-meta-from-file
@@ -78,7 +85,7 @@
     (-> out-file
         (.getParentFile)
         (.mkdirs))
-    (spit out-file (-> parse-data (dissoc :path) transform :content))
+    (spit out-file (:content (transform (dissoc parse-data :path))))
     out-file))
 
 (defn html-parser

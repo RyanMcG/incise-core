@@ -14,6 +14,7 @@
                  [org.clojure/tools.namespace "0.2.4"]
                  [org.clojure/tools.cli "0.3.1"]
                  [pallet-map-merge "0.1.0"]
+                 [enlive "1.1.5"]
                  [clj-time "0.6.0"]
                  [com.taoensso/timbre "3.1.6"]
                  [manners "0.6.0"]]
