@@ -61,11 +61,13 @@
   (reset! file-modification-times {})
   (let [orig-out *out*
         orig-err *err*
+        orig-in *in*
         paths-set (atom #{})
         generated (atom {})]
     (delete-recursively (file (conf/get :out-dir)))
     (fn [request]
       (binding [*out* orig-out
+                *in* orig-in
                 *err* orig-err]
         (->> (input-file-seq)
              (reference-files! paths-set)
