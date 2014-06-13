@@ -1,14 +1,14 @@
 (ns incise.parsers.core-spec
   (:require [speclj.core :refer :all]
             [incise.config :as conf]
-            (incise [load :refer [load-parsers-and-layouts]]
+            (incise [load :refer [load-parsers-and-transformers]]
                     [spec-helpers :refer [redef-around]])
             [clojure.java.io :refer [file resource]]
-            [incise.layouts.core :refer [layouts]]
+            [incise.transformers.core :refer [transformers]]
             [incise.parsers.core :refer :all]))
 
 (def redef-parsers (redef-around parsers (atom {})))
-(def redef-layouts (redef-around layouts (atom {})))
+(def redef-transformers (redef-around transformers (atom {})))
 
 (describe "register"
   redef-parsers
@@ -39,18 +39,18 @@
 
 (describe "parsers"
   redef-parsers
-  redef-layouts
+  redef-transformers
   (it "is initially empty"
     (should (empty? @parsers)))
   (it "gets populted when parsers are loaded"
-    (load-parsers-and-layouts)
+    (load-parsers-and-transformers)
     (doseq [extension ["htm" "html" "clj"]]
       (should-contain extension @parsers))))
 
 (describe "parse"
   redef-parsers
-  redef-layouts
-  (before (load-parsers-and-layouts))
+  redef-transformers
+  (before (load-parsers-and-transformers))
   (with real-html-file (file (resource "spec/example.html")))
   (with output-files ((parse @real-html-file)))
   (it "outputs html"

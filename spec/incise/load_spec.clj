@@ -7,8 +7,8 @@
     (should= (set expected-namespaces) (set (loader)))))
 
 (describe "loading"
-  (with ns-syms '[incise.layouts.impl.cool
-                  incise.layouts.impl.cool-test
+  (with ns-syms '[incise.transformers.impl.cool
+                  incise.transformers.impl.cool-test
                   incise.parsers.impl.cool
                   incise.parsers.impl.cool-spec
                   incise.deployer.impl.cool
@@ -21,10 +21,10 @@
   (context "deployers"
     (it-should-load-expected-namespaces '[incise.deployer.impl.cool]
                                         load-deployers))
-  (context "layouts and parsers"
+  (context "transformers and parsers"
     (it-should-load-expected-namespaces '[incise.parsers.impl.cool
-                                          incise.layouts.impl.cool]
-                                        load-parsers-and-layouts))
+                                          incise.transformers.impl.cool]
+                                        load-parsers-and-transformers))
   (context "once fixtures"
     (it-should-load-expected-namespaces '[incise.once.fixtures.impl.cool]
                                         load-once-fixtures)))

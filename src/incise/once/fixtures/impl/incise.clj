@@ -1,10 +1,10 @@
 (ns incise.once.fixtures.impl.incise
-  (:require [incise.load :refer [load-parsers-and-layouts]]
+  (:require [incise.load :refer [load-parsers-and-transformers]]
             [incise.once.fixtures.core :refer [register]]
             [incise.parsers.core :refer [parse-all-input-files]]))
 
 (defn- load-fixture [thunk]
-  (load-parsers-and-layouts)
+  (load-parsers-and-transformers)
   (thunk))
 
 (defn- parse-fixture [thunk]
