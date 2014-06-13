@@ -16,7 +16,7 @@
   [["-h" "--help" "Print this help."]
    ["-m" "--method METHOD" "serve, once, or deploy"
     :default :serve
-    :parse-fn #(keyword %)
+    :parse-fn keyword
     :validate [#(contains? valid-methods %)
                "method must be either serve, once or deploy"]]
    ["-c" "--config CONFIG_FILE"
