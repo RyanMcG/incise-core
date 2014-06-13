@@ -53,23 +53,24 @@
                (fn [f# & args#] (~replacement (apply f# args#))))
      ""))
 
-(defn eval-with-context [code]
+(defn- eval-with-context [code]
   (binding [*ns* (create-ns `user#)]
     (require '[clojure.core :refer :all])
-    (require '[incise.layouts.utils :refer [*site-options* *parse*]])
+    (require '[incise.transformers.layout :refer [*site-options* *parse*]])
     (eval `(do
              (def ~'parses (vals @incise.parsers.parse/parses))
              (def ~'tags (incise.utils/slot-by :tags ~'parses))
              ~@code))))
 
-(defn render-content
-  "Render the given content based on its type. If it is a list, evaluate it in
-  the appropriate context. Otherwise just return it."
-  [content]
-  (condp #(%1 %2) content
-    list? (eval-with-context content)
-    content))
+(defprotocol RenderableContent (render-content [content]))
+(extend-protocol RenderableContent
+  clojure.lang.PersistentList
+  (render-content [content] (eval-with-context content))
+  nil
+  (render-content [content] "")
+  Object
+  (render-content [content] (str content)))
 
 (defn use-layout
   "Use the given layout function by calling it with *site-options* and *parse*."
-  [layout-fn] (layout-fn *parse*))
+  [layout-fn] (:content (layout-fn *parse*)))
