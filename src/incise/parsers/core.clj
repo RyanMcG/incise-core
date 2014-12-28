@@ -84,10 +84,10 @@
   invoking the parse result."
   [files]
   (->> files
-       (map parse)
+       (pmap parse)
        (keep identity)
        (doall) ; Ensure that all files have been parsed.
-       (map invoke)
+       (pmap invoke)
        (into {})))
 
 (defn parse-all-input-files
