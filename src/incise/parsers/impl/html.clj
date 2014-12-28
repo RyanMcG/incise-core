@@ -2,4 +2,5 @@
   (:require (incise.parsers [core :as pc]
                             [html :refer [html-parser]])))
 
-(pc/register [:html :htm] (html-parser identity))
+(def html-identiy-parser (html-parser identity))
+(pc/register [:html :htm] #'html-identiy-parser)

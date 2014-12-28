@@ -5,4 +5,6 @@
 (defn clj-parse [code]
   (read-string (str \( code \))))
 
-(register [:clj] (html-parser clj-parse))
+(def html-clj-parser (html-parser clj-parse))
+
+(register [:clj] #'html-clj-parser)

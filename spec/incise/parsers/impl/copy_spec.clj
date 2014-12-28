@@ -16,12 +16,12 @@
         file-path (.getCanonicalPath file-in-dir)]
     (= dir-path (subs file-path 0 (count dir-path)))))
 
-(describe "parse"
+(describe "copier"
   (with copyme (file (resource "spec/COPYME")))
   (with out-dir (spec-temp-dir))
   (around-with-custom-config :out-dir @out-dir
                              :in-dir (.getParent (.getParentFile @copyme)))
-  (with out-file (first (force (parse @copyme))))
+  (with out-file (first (force (copier @copyme))))
   (it "actually copies the file"
     (should (.exists @out-file)))
   (it "preserves file name and directory structure"

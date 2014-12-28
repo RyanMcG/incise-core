@@ -4,7 +4,7 @@
             [clojure.java.io :refer [file copy]]
             [incise.config :as conf]))
 
-(defn parse
+(defn copier
   "An incise parser which simply copies a file based on its relative path to the
   input directory."
   [input-file]
@@ -16,4 +16,4 @@
       (copy input-file output-file)
       [output-file])))
 
-(pc/register [:svg :copy :cname :jpeg :jpg :png] parse)
+(pc/register [:svg :copy :cname :jpeg :jpg :png] #'copier)
