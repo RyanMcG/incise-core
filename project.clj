@@ -17,6 +17,7 @@
                  [enlive "1.1.5"]
                  [clj-time "0.6.0"]
                  [com.taoensso/timbre "3.1.6"]
+                 [chic-text/chic-text.terminal "0.1.0"]
                  [manners "0.6.0"]]
   :profiles {:dev {:dependencies [[speclj "2.9.1"]]}}
   :repl-options {:init-ns incise.repl}
