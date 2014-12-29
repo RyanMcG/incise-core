@@ -7,7 +7,7 @@
   (:import [java.io PushbackReader])
   (:refer-clojure :exclude [reset! load assoc! get get-in]))
 
-(def ^:private default-config
+(def default-config
   {:parse-defaults {:publish true}
    :ignore-publish false
    :in-dir "content"
