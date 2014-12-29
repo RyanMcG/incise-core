@@ -4,10 +4,12 @@ An extensible static site generator written in Clojure.
 This is the core component of incise.
 If you want the batteries included version see [incise][].
 
-## Running specs
+Since incise-core uses edn, Clojure 1.4+ is required.
+
+## Running tests
 
 ```bash
-lein spec
+lein test-and-spec
 ```
 
 ## What's next?
