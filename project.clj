@@ -19,8 +19,7 @@
                  [com.taoensso/timbre "3.3.1"]
                  [manners "0.6.0"]
                  [chic-text/chic-text.terminal "0.1.0"]]
-  :aliases {"incise" ^:pass-through-help ["run" "-m" "incise.core"]
-            "spec-all" ["with-profile" "spec:spec,1.5:spec,1.7" "spec"]
+  :aliases {"spec-all" ["with-profile" "spec:spec,1.5:spec,1.7" "spec"]
             "test-all" ["with-profile" "test:test,1.5:test,1.7" "test"]
             "test-and-spec" ["do" "spec-all," "test-all"]
             "test-ancient" "test-and-spec"}
