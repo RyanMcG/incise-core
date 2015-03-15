@@ -1,4 +1,4 @@
-(defproject incise-core "0.5.0"
+(defproject incise-core "0.5.1-SNAPSHOT"
   :description "A hopefully simplified static site generator in Clojure."
   :url "https://github.com/RyanMcG/incise"
   :license {:name "Eclipse Public License"
