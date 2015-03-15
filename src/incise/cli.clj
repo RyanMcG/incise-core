@@ -3,6 +3,7 @@
                     [config :refer [default-config]])
             [clojure.string :as s]
             [chic-text.terminal :refer [terminal-table-of]]
+            [chic-text.tools.cli :as chic-cli]
             [clojure.tools.cli :refer [parse-opts]]))
 
 (defprotocol CliOptions
@@ -76,18 +77,6 @@
   (help? [this] (boolean (or (= (method this) :help)
                              (:help (:options this))))))
 
-(defn- create-summary [specs]
-  (terminal-table-of specs
-                     "  "
-                     (fn [{:keys [short-opt long-opt required]}]
-                       (str (if short-opt (str short-opt ", "))
-                            long-opt
-                            (if required (str " " required))))
-                     " – "
-                     (fn [{:keys [desc validate-msg default]}]
-                       (str desc
-                            (if validate-msg (str " " validate-msg))
-                            (if default (str " [default: " default \]))))))
 (defn parse-args [args]
   (map->ToolsCliOptions (parse-opts args cli-options
-                                    :summary-fn create-summary)))
+                                    :summary-fn chic-cli/summary)))
