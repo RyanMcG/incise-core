@@ -31,8 +31,9 @@
  ;; Deploy specific configuration
  :deploy {;; Specify the name of the deploy workflow to be used in this project
           :workflow :git-branch
-          ;; The following to config options are specific to the git-branch
-          ;; deploy workflow>
+          
+          ;; The following config options are specific to the git-branch
+          ;; deployer.
 
           ;; The name of the orphaned branch to create and use for generated
           ;; content.
