@@ -85,7 +85,7 @@
     (-> out-file
         (.getParentFile)
         (.mkdirs))
-    (spit out-file (:content (transform (dissoc parse-data :path))))
+    (spit out-file (:content (transform parse-data)))
     out-file))
 
 (defn html-parser
