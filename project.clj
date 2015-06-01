@@ -27,6 +27,6 @@
                     :test-paths ["spec"]
                     :plugins [[speclj "3.1.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha4"]]}}
+             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-RC1"]]}}
   :repl-options {:init-ns incise.repl}
   :main incise.core)
