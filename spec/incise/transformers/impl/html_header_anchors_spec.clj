@@ -1,7 +1,7 @@
 (ns incise.transformers.impl.html-header-anchors-spec
   (:require [incise.transformers.impl.html-header-anchors :refer
              [prefix-headers-with-anchors html-header-anchors]]
-            [speclj.core :refer [describe it with should=]]))
+            [speclj.core :refer [run-specs, describe it with should=]]))
 
 (describe 'prefix-headers-with-anchors
   (with sample-source (str "<html><head><title>Yay</title></head><body>"
