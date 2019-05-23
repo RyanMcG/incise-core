@@ -1,0 +1,7 @@
+{
+  "initializationOptions": {
+    "project-file": "project.clj",
+    "source-paths": ["src", "test", "spec"],
+    "classpath-cmd": "lein classpath"
+  }
+}
