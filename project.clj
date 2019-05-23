@@ -3,7 +3,7 @@
   :url "https://github.com/RyanMcG/incise"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [ring "1.4.0"]
                  [com.stuartsierra/component "0.3.0"]
                  [compojure "1.4.0"]
@@ -19,15 +19,10 @@
                  [com.taoensso/timbre "3.3.1"]
                  [manners "0.8.0"]
                  [chic-text "0.2.0"]]
-  :aliases {"spec-all" ["with-profile" "spec:spec,1.5:spec,1.7" "spec"]
-            "test-all" ["with-profile" "test:test,1.5:test,1.7" "test"]
-            "test-and-spec" ["do" "spec-all," "test-all"]
-            "test-ancient" "test-and-spec"}
+  :aliases {"spec" ["with-profile" "spec" "spec"]
+            "test-and-spec" ["do" "spec," "test"]}
   :profiles {:spec {:dependencies [[speclj "3.3.1"]]
                     :test-paths ["spec"]
-                    :plugins [[speclj "3.1.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
-             :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-             :1.8 {:dependencies [[org.clojure/clojure "1.8.0-alpha5"]]}}
+                    :plugins [[speclj "3.1.0"]]}}
   :repl-options {:init-ns incise.repl}
   :main incise.core)

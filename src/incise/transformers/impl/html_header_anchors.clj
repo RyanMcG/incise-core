@@ -4,7 +4,7 @@
             [net.cgrand.enlive-html :as html]))
 
 (defn- make-anchor [name]
-  (html/html [:a.incise-generated-tag {:name name :href (str \# name)}]))
+  (html/html [:a.incise-generated-tag (sorted-map :name name :href (str \# name))]))
 
 (defn- node->anchor [node]
   (-> node
@@ -15,7 +15,7 @@
       (make-anchor)))
 
 (defn- node-prefixer [prefix-fn]
-  (fn prefix-node [node]
+  (fn [node]
     (assoc node
            :content
            (vec (concat (prefix-fn node)
@@ -27,8 +27,6 @@
   "Takes a string of HTML and adds prefixes anchor tags to the contents of
   headers in it."
   [html-source-str]
-  {:pre (string? html-source-str)
-   :post (string? %)}
   (html/sniptest html-source-str
                  [#{:h1 :h2 :h3 :h4 :h5 :h6}]
                  prefix-with-anchor))
