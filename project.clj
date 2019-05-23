@@ -3,15 +3,15 @@
   :url "https://github.com/RyanMcG/incise"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [ring "1.4.0"]
                  [com.stuartsierra/component "0.3.0"]
                  [compojure "1.4.0"]
                  [http-kit "2.1.19"]
                  [robert/hooke "1.3.0"]
-                 [org.clojure/java.classpath "0.2.2"]
+                 [org.clojure/java.classpath "0.3.0"]
                  [org.clojure/tools.nrepl "0.2.11"]
-                 [org.clojure/tools.namespace "0.2.10"]
+                 [org.clojure/tools.namespace "0.2.11"]
                  [org.clojure/tools.cli "0.3.3"]
                  [pallet-map-merge "0.1.0"]
                  [enlive "1.1.6"]
